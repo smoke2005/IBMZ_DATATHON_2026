@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentinel AI — Website Scan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="logo">✦</div>
+      <div>
+        <h2>SENTINEL <span>AI</span></h2>
+        <p>WEB INTELLIGENCE</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <div id="loading">
+        <div class="radar">⌁</div>
+        <p class="eyebrow">AUTOMATED SECURITY CHECK</p>
+        <h1>Inspecting destination</h1>
+        <p class="muted">Your webpage is being checked before you continue.</p>
+        <div id="url" class="url"></div>
+        <div class="progress"><span></span></div>
+        <p id="status" class="muted">Connecting to Sentinel AI…</p>
+      </div>
+
+      <div id="result" hidden>
+        <div id="symbol" class="symbol">✓</div>
+        <p class="eyebrow">SCAN COMPLETE</p>
+        <h1 id="title"></h1>
+        <p id="description" class="muted"></p>
+        <div id="resultUrl" class="url"></div>
+        <div id="categories" class="categories"></div>
+        <div id="actions" class="actions"></div>
+      </div>
+
+      <div id="error" hidden>
+        <div class="symbol danger">!</div>
+        <p class="eyebrow">SCAN UNAVAILABLE</p>
+        <h1>Could not verify this website</h1>
+        <p id="errorText" class="muted"></p>
+        <button id="retry" class="primary">Retry scan</button>
+      </div>
+
+      <p class="footnote">
+        AI classifications can be wrong. A safe result is not a guarantee
+        that a website is harmless.
+      </p>
+    </section>
+
+    <footer>Sentinel AI · Local analysis engine</footer>
+  </main>
+  <script src="scan.js"></script>
+</body>
+</html>
