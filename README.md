@@ -69,43 +69,13 @@ By combining different inputs and classifiers, SafeSearch aims to provide broade
 
 ## 🏗️ System Architecture
 
-```mermaid
-flowchart TD
-    A["User navigates to a webpage"]
-    B["SafeSearch Chrome Extension"]
-    C["Scanning Interface"]
-    D["Flask REST API"]
-    E["Webpage Scraper"]
-    F["Extracted Text"]
-    G["Webpage Screenshot"]
-    H["Hate Speech Classifier - XGBoost"]
-    I["Phishing URL Classifier"]
-    J["Explicit Content - TF-IDF + Classifier"]
-    K["Gambling Image Classifier - DenseNet121"]
-    L["Safety Verdict Aggregator"]
-    M{"Overall Verdict"}
-    N["Display Safe Result"]
-    O["Display Safety Warning"]
-    P["User Navigation Decision"]
-
-    A --> B --> C --> D
-    D --> E
-    E --> F
-    E --> G
-    F --> H
-    F --> J
-    D --> I
-    G --> K
-    H --> L
-    I --> L
-    J --> L
-    K --> L
-    L --> M
-    M -->|Safe| N
-    M -->|Unsafe| O
-    N --> P
-    O --> P
-```
+<p align="center">
+  <img
+    src="docs/safesearch-architecture.png"
+    alt="SafeSearch System Architecture"
+    width="100%"
+  />
+</p>
 
 ### How the pipeline works
 
