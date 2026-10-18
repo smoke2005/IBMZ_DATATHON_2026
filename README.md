@@ -109,7 +109,7 @@ Classify URLs as `phishing` or `legitimate` using `dataset_phishing_processed.cs
 - **Models:** Linear SVM (`LinearSVC`) and Logistic Regression, evaluated using precision, recall, F1-score, and ROC-AUC.
 - **Selected Model:** Linear SVM, achieving **97.16% accuracy**, **97.26% phishing recall**, and **0.9941 ROC-AUC**.
 
-#### 📊 Model Results
+#### Model Results
 
 | Metric | Linear SVM | Logistic Regression |
 |---|---:|---:|
@@ -118,27 +118,20 @@ Classify URLs as `phishing` or `legitimate` using `dataset_phishing_processed.cs
 | Recall | **97.26%** | 96.17% |
 | F1-score | **97.16%** | 95.86% |
 
+#### Visualizations
 
-#### 📈 Visualizations
+| Model Comparison | Confusion Matrix |
+|:---:|:---:|
+| <img src="model_outputs/phishing/validation_model_comparison.png" width="350"> | <img src="model_outputs/phishing/validation_confusion_matrix.png" width="350"> |
 
-**Model Comparison**
+| ROC Curve | Precision–Recall Curve |
+|:---:|:---:|
+| <img src="model_outputs/phishing/roc_curve_test.png" width="350"> | <img src="model_outputs/phishing/local_feature_sensitivity.png" width="350"> |
 
-![Model Comparison](model_outputs/phishing/validation_model_comparison.png)
+| Feature Importance |
+|:---:|
+| <img src="model_outputs/phishing/permutation_feature_importance.png" width="500"> |
 
-**Confusion Matrix**
-
-![Confusion Matrix](results/phishing/validation_confusion_matrix.png)
-
-**ROC Curve**
-
-![ROC Curve](results/phishing/roc_curve_test.png)
-
-**Feature Analysis**
-
-![Feature Importance](results/phishing/permutation_feature_importance.png)
-
-
-### 3. Explicit Content Detection
 
 - **Input:** Extracted webpage text.
 - **Preprocessing:** Text cleaning followed by TF-IDF vectorization.
