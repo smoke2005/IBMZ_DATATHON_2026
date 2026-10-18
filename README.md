@@ -93,7 +93,7 @@ The system also returns individual model confidence values, where available, to 
 
 ### 1. Hate Speech Detection
 
-<img src="architecture_images/hate_speech_arch.png" width="500">
+<img src="architecture_images/hate_speech_arch.jpeg" width="600">
 
 Dataset: https://www.kaggle.com/datasets/waalbannyantudre/hate-speech-detection-curated-dataset
 
@@ -125,25 +125,18 @@ The dataset contains text samples and binary labels. The modelling workflow uses
 
 #### Visualizations
 
-### Model Performance Comparison
-![Model performance comparison](model_outputs/hate_speech/1_model_performance_comparison.png)
+| Model Performance Comparison | Confusion Matrix |
+|:---:|:---:|
+| <img src="model_outputs/hate_speech/1_model_performance_comparison.png" width="320"> | <img src="model_outputs/hate_speech/2_confusion_matrix.png" width="320"> |
 
-### Confusion Matrix
-![Confusion matrix](model_outputs/hate_speech/2_confusion_matrix.png)
-
-### Precision–Recall Curve
-![Precision–Recall curve](model_outputs/hate_speech/3_precision_recall_curve.png)
-
-### ROC Curves
-![ROC curves](model_outputs/hate_speech/4_roc_curves.png)
-
-### Class Distribution
-![Class distribution](model_outputs/hate_speech/5_class_distribution.png)
+| Precision–Recall Curve | ROC Curves |
+|:---:|:---:|
+| <img src="model_outputs/hate_speech/3_precision_recall_curve.png" width="320"> | <img src="model_outputs/hate_speech/4_roc_curves.png" width="320"> |
 
 
 ### 2. Phishing URL Detection
 
-<img src="architecture_images/phishing_arch.png" width="500">
+<img src="architecture_images/phishing_arch.png" width="600">
 
 Dataset: https://www.kaggle.com/datasets/shashwatwork/web-page-phishing-detection-dataset
 
@@ -180,7 +173,7 @@ Classify URLs as `phishing` or `legitimate` using `dataset_phishing.csv`.
 
 ### 3. Adult Content Classification
 
-<img src="architecture_images/adult_content_arch.png" width="500">
+<img src="architecture_images/adult_content_arch.png" width="600">
 
 Dataset: https://huggingface.co/datasets/valurank/Adult-content-dataset
 
@@ -240,14 +233,14 @@ Dataset: https://huggingface.co/datasets/valurank/Adult-content-dataset
 
 #### Visualizations
 
-![Test Model Comparison](model_outputs/adult_content/test_model_comparison.png)
-
-![DistilBERT Confusion Matrix](model_outputs/adult_content/selected_confusion_matrix.png)
+| Test Model Comparison | DistilBERT Confusion Matrix |
+|:---:|:---:|
+| <img src="model_outputs/adult_content/test_model_comparison.png" width="320"> | <img src="model_outputs/adult_content/test_model_comparison.png" width="320"> |
 
 
 ### 4. Gambling Image Detection
 
-<img src="architecture_images/gambling_model_arch.png" width="500">
+<img src="architecture_images/gambling_model_arch.png" width="600">
 
 Dataset: https://huggingface.co/datasets/YashJain/UI-Elements-Detection-Dataset  
         https://www.kaggle.com/datasets/shenaozheng/ui-detection-for-gambling-sites
