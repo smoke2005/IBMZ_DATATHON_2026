@@ -71,7 +71,7 @@ By combining different inputs and classifiers, SafeSearch aims to provide broade
 
 <p align="center">
   <img
-    src="docs/safesearch-architecture.png"
+    src="architecture_images/overall_arch.png"
     alt="SafeSearch System Architecture"
     width="100%"
   />
