@@ -93,38 +93,180 @@ The system also returns individual model confidence values, where available, to 
 
 ### 1. Hate Speech Detection
 
-- **Input:** Extracted webpage text.
-- **Preprocessing:** Lowercasing, URL removal, and removal of non-alphabetic characters.
-- **Model:** Trained XGBoost classifier.
-- **Output:** `Hate` or `Non-hate`, with a confidence score.
+<img src="architecture_images/hate_speech_arch.png" width="500">
 
-This module helps identify potentially hateful language in webpage text.
+Dataset: https://www.kaggle.com/datasets/waalbannyantudre/hate-speech-detection-curated-dataset
+
+The goal is to classify text as **Non-hate (0)** or **Hate (1)**. The workflow explores how combining text representations, class weighting, and hyperparameter tuning can improve the model's ability to identify hate speech, especially when the classes are imbalanced.
+
+#### Dataset
+
+The dataset contains text samples and binary labels. The modelling workflow uses the text content and its cleaned version to learn patterns associated with each class. The data is split into training and test sets, preserving the class proportions so evaluation reflects the dataset's imbalance.
+
+#### Model Flow
+
+1. **Preprocessing** — remove empty or duplicate text, prepare the binary labels, and split the data into training and test sets.
+2. **Feature extraction** — represent text using word-level TF-IDF (unigrams and bigrams), character-level TF-IDF, and handcrafted text statistics such as text length, uppercase ratio, punctuation, URLs, and mentions.
+3. **Class-weighted XGBoost** — use `scale_pos_weight` to give more importance to Hate examples, helping the model learn from the minority class.
+4. **Hyperparameter tuning** — use `RandomizedSearchCV` with stratified 3-fold cross-validation to test combinations of XGBoost settings. Hate-class F1 is used as the selection metric, balancing precision and recall for the Hate label.
+5. **Combined XGBoost** — combine the selected hyperparameters with class weighting, then fit the final pipeline on the training data.
+6. **Evaluation** — evaluate predictions on the test set using Accuracy, Precision, Recall, F1-score, Macro F1, ROC-AUC, and visual diagnostics.
+
+#### Best Combined Model — Evaluation
+
+| Metric | Score |
+|---|---:|
+| Accuracy | **78.92%** |
+| Hate Precision | **45.49%** |
+| Hate Recall | **79.26%** |
+| Hate F1-score | **57.80%** |
+| Macro F1 | **71.88%** |
+| ROC-AUC | **86.88%** |
+
+#### Visualizations
+
+### Model Performance Comparison
+![Model performance comparison](model_outputs/hate_speech/1_model_performance_comparison.png)
+
+### Confusion Matrix
+![Confusion matrix](model_outputs/hate_speech/2_confusion_matrix.png)
+
+### Precision–Recall Curve
+![Precision–Recall curve](model_outputs/hate_speech/3_precision_recall_curve.png)
+
+### ROC Curves
+![ROC curves](model_outputs/hate_speech/4_roc_curves.png)
+
+### Class Distribution
+![Class distribution](model_outputs/hate_speech/5_class_distribution.png)
+
 
 ### 2. Phishing URL Detection
 
-- **Input:** Target webpage URL.
-- **Model:** Trained URL phishing classifier.
-- **Output:** `Phishing` or `Legitimate`, with a confidence score.
+<img src="architecture_images/phishing_arch.png" width="500">
 
-This module evaluates URLs for patterns learned during model training. It does not guarantee that every malicious website will be detected.
+Dataset: https://www.kaggle.com/datasets/shashwatwork/web-page-phishing-detection-dataset
 
-### 3. Explicit Content Detection
+Classify URLs as `phishing` or `legitimate` using `dataset_phishing.csv`.
 
-- **Input:** Extracted webpage text.
-- **Preprocessing:** Text cleaning followed by TF-IDF vectorization.
-- **Model:** Trained adult-content classifier.
-- **Output:** `Adult` or `Non-adult`, with a confidence score.
+- **Features:** Character-level TF-IDF (3–5 character n-grams, up to 200K features) combined with engineered URL features such as URL length, subdomains, special characters, digit ratios, and phishing indicators.
+- **Preprocessing:** Missing-value handling, duplicate cleaning, numerical imputation and scaling, and stratified dataset splitting.
+- **Models:** Linear SVM (`LinearSVC`) and Logistic Regression, evaluated using precision, recall, F1-score, and ROC-AUC.
+- **Selected Model:** Linear SVM, achieving **97.16% accuracy**, **97.26% phishing recall**, and **0.9941 ROC-AUC**.
 
-This module identifies potentially explicit text and can help flag age-inappropriate material.
+#### Model Results
+
+| Metric | Linear SVM | Logistic Regression |
+|---|---:|---:|
+| Accuracy | **97.16%** | 95.84% |
+| Precision | 97.05% | 95.54% |
+| Recall | **97.26%** | 96.17% |
+| F1-score | **97.16%** | 95.86% |
+
+#### Visualizations
+
+| Model Comparison | Confusion Matrix |
+|:---:|:---:|
+| <img src="model_outputs/phishing/validation_model_comparison.png" width="320"> | <img src="model_outputs/phishing/validation_confusion_matrix.png" width="320"> |
+
+| ROC Curve | Precision–Recall Curve |
+|:---:|:---:|
+| <img src="model_outputs/phishing/roc_curve_test.png" width="320"> | <img src="model_outputs/phishing/local_feature_sensitivity.png" width="320"> |
+
+| Feature Importance |
+|:---:|
+| <img src="model_outputs/phishing/permutation_feature_importance.png" width="500"> |
+
+
+### 3. Adult Content Classification
+
+<img src="architecture_images/adult_content_arch.png" width="500">
+
+Dataset: https://huggingface.co/datasets/valurank/Adult-content-dataset
+
+#### Review
+- Binary text classification: `adult` vs. `non-adult`
+- Models: Logistic Regression, Linear SVM, and DistilBERT
+- Data split: 65% training, 15% validation, 20% testing
+- Best model: DistilBERT
+
+#### Preprocessing
+1. Normalize column names.
+2. Remove rows with missing values.
+3. Clean whitespace in text.
+4. Normalize category labels.
+5. Remove invalid labels and empty descriptions.
+6. Encode `non-adult = 0`, `adult = 1`.
+7. Remove duplicate text-label pairs.
+8. Remove descriptions with conflicting labels.
+9. Verify that both classes have sufficient samples.
+
+#### Feature Engineering
+1. Extract word-level TF-IDF features for classical models.
+2. Use unigrams and bigrams.
+3. Set TF-IDF maximum features to `100000` with sublinear term frequency.
+4. Tokenize text using `distilbert/distilbert-base-uncased`.
+5. Truncate sequences to 256 tokens and dynamically pad batches.
+
+#### Models
+- **Logistic Regression:** TF-IDF, `class_weight="balanced"`, `max_iter=1000`.
+- **Linear SVM:** TF-IDF, `class_weight="balanced"`.
+- **DistilBERT:** Fine-tuned pretrained transformer; best configuration selected using validation adult-class F1-score.
+
+#### Test Results
+
+| Metric | Logistic Regression | Linear SVM | DistilBERT |
+|---|---:|---:|---:|
+| Accuracy | 95.88% | 95.29% | **97.06%** |
+| Adult Precision | **98.39%** | 96.83% | 96.97% |
+| Adult Recall | 91.04% | 91.04% | **95.52%** |
+| Adult F1-score | 94.57% | 93.85% | **96.24%** |
+| ROC-AUC | 0.9952 | 0.9943 | **0.9968** |
+| Average Precision | 0.9932 | 0.9922 | **0.9955** |
+
+#### Best Model: DistilBERT
+
+- Test accuracy: **97.06%**
+- Adult precision: **96.97%**
+- Adult recall: **95.52%**
+- Adult F1-score: **96.24%**
+
+#### Confusion Matrix
+
+| Actual / Predicted | Non-Adult | Adult |
+|---|---:|---:|
+| Non-Adult | 101 | 2 |
+| Adult | 3 | 64 |
+
+#### Visualizations
+
+![Test Model Comparison](model_outputs/adult_content/test_model_comparison.png)
+
+![DistilBERT Confusion Matrix](model_outputs/adult_content/selected_confusion_matrix.png)
+
 
 ### 4. Gambling Image Detection
 
-- **Input:** Captured webpage screenshot.
-- **Preprocessing:** Resize to 224 × 224 pixels, normalize pixel values, and prepare the image tensor.
-- **Model:** DenseNet121-based image classifier.
-- **Output:** `gambling` or `non_gambling`, with a confidence score.
+<img src="architecture_images/gambling_model_arch.png" width="500">
 
-This module uses visual patterns to identify gambling-related imagery.
+Dataset: https://huggingface.co/datasets/YashJain/UI-Elements-Detection-Dataset  
+        https://www.kaggle.com/datasets/shenaozheng/ui-detection-for-gambling-sites
+
+SafeSearch uses a transfer-learning-based image classifier to detect gambling-related content in webpage screenshots.
+
+**Architecture & Training**
+- **Backbone:** DenseNet121 pretrained on ImageNet, with the convolutional base frozen during training.
+- **Classification head:** Global Average Pooling → Dense (64, ReLU) → Dropout (0.3) → Dense (1, Sigmoid).
+- **Input:** Webpage screenshots resized to `224 × 224 × 3`, normalized to `[0, 1]`.
+- **Data balancing:** Undersamples both classes to the size of the minority class.
+- **Augmentation:** Random horizontal flips, rotations, zoom, brightness, and contrast adjustments to improve generalization.
+- **Optimization:** Adam optimizer with binary cross-entropy loss, batch size `32`, and up to `10` epochs.
+- **Regularization:** Early stopping monitors validation loss with patience `3` and restores the best weights.
+
+**Inference & Evaluation**
+
+The sigmoid output is thresholded at `0.5` to classify screenshots as `Gambling` or `Non-Gambling`. Performance is measured on the held-out test set using accuracy, ROC-AUC, precision, recall, F1-score, and a confusion matrix.
+
 
 ### Final Safety Verdict
 
@@ -134,7 +276,7 @@ This approach is easy to interpret and demonstrates how multiple models can cont
 
 ---
 
-## 🎯 Our Vision
+## Our Vision
 
 We believe children should be able to explore the internet with fewer unexpected encounters with harmful content.
 
