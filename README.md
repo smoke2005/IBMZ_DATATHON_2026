@@ -102,11 +102,41 @@ This module helps identify potentially hateful language in webpage text.
 
 ### 2. Phishing URL Detection
 
-- **Input:** Target webpage URL.
-- **Model:** Trained URL phishing classifier.
-- **Output:** `Phishing` or `Legitimate`, with a confidence score.
+Classify URLs as `phishing` or `legitimate` using `dataset_phishing_processed.csv`.
 
-This module evaluates URLs for patterns learned during model training. It does not guarantee that every malicious website will be detected.
+- **Features:** Character-level TF-IDF (3–5 character n-grams, up to 200K features) combined with engineered URL features such as URL length, subdomains, special characters, digit ratios, and phishing indicators.
+- **Preprocessing:** Missing-value handling, duplicate cleaning, numerical imputation and scaling, and stratified dataset splitting.
+- **Models:** Linear SVM (`LinearSVC`) and Logistic Regression, evaluated using precision, recall, F1-score, and ROC-AUC.
+- **Selected Model:** Linear SVM, achieving **97.16% accuracy**, **97.26% phishing recall**, and **0.9941 ROC-AUC**.
+
+#### 📊 Model Results
+
+| Metric | Linear SVM | Logistic Regression |
+|---|---:|---:|
+| Accuracy | **97.16%** | 95.84% |
+| Precision | 97.05% | 95.54% |
+| Recall | **97.26%** | 96.17% |
+| F1-score | **97.16%** | 95.86% |
+
+
+#### 📈 Visualizations
+
+**Model Comparison**
+
+![Model Comparison](model_outputs/phishing/validation_model_comparison.png)
+
+**Confusion Matrix**
+
+![Confusion Matrix](results/phishing/validation_confusion_matrix.png)
+
+**ROC Curve**
+
+![ROC Curve](results/phishing/roc_curve_test.png)
+
+**Feature Analysis**
+
+![Feature Importance](results/phishing/permutation_feature_importance.png)
+
 
 ### 3. Explicit Content Detection
 
