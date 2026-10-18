@@ -93,6 +93,8 @@ The system also returns individual model confidence values, where available, to 
 
 ### 1. Hate Speech Detection
 
+Dataset: https://www.kaggle.com/datasets/waalbannyantudre/hate-speech-detection-curated-dataset
+
 - **Input:** Extracted webpage text.
 - **Preprocessing:** Lowercasing, URL removal, and removal of non-alphabetic characters.
 - **Model:** Trained XGBoost classifier.
@@ -102,7 +104,9 @@ This module helps identify potentially hateful language in webpage text.
 
 ### 2. Phishing URL Detection
 
-Classify URLs as `phishing` or `legitimate` using `dataset_phishing_processed.csv`.
+Dataset: https://www.kaggle.com/datasets/shashwatwork/web-page-phishing-detection-dataset
+
+Classify URLs as `phishing` or `legitimate` using `dataset_phishing.csv`.
 
 - **Features:** Character-level TF-IDF (3–5 character n-grams, up to 200K features) combined with engineered URL features such as URL length, subdomains, special characters, digit ratios, and phishing indicators.
 - **Preprocessing:** Missing-value handling, duplicate cleaning, numerical imputation and scaling, and stratified dataset splitting.
@@ -122,16 +126,19 @@ Classify URLs as `phishing` or `legitimate` using `dataset_phishing_processed.cs
 
 | Model Comparison | Confusion Matrix |
 |:---:|:---:|
-| <img src="model_outputs/phishing/validation_model_comparison.png" width="350"> | <img src="model_outputs/phishing/validation_confusion_matrix.png" width="350"> |
+| <img src="model_outputs/phishing/validation_model_comparison.png" width="320"> | <img src="model_outputs/phishing/validation_confusion_matrix.png" width="320"> |
 
 | ROC Curve | Precision–Recall Curve |
 |:---:|:---:|
-| <img src="model_outputs/phishing/roc_curve_test.png" width="350"> | <img src="model_outputs/phishing/local_feature_sensitivity.png" width="350"> |
+| <img src="model_outputs/phishing/roc_curve_test.png" width="320"> | <img src="model_outputs/phishing/local_feature_sensitivity.png" width="320"> |
 
 | Feature Importance |
 |:---:|
 | <img src="model_outputs/phishing/permutation_feature_importance.png" width="500"> |
 
+#### 3. Adult Content Classification
+
+Dataset: https://huggingface.co/datasets/valurank/Adult-content-dataset
 
 - **Input:** Extracted webpage text.
 - **Preprocessing:** Text cleaning followed by TF-IDF vectorization.
@@ -142,12 +149,24 @@ This module identifies potentially explicit text and can help flag age-inappropr
 
 ### 4. Gambling Image Detection
 
-- **Input:** Captured webpage screenshot.
-- **Preprocessing:** Resize to 224 × 224 pixels, normalize pixel values, and prepare the image tensor.
-- **Model:** DenseNet121-based image classifier.
-- **Output:** `gambling` or `non_gambling`, with a confidence score.
+Dataset: https://huggingface.co/datasets/YashJain/UI-Elements-Detection-Dataset  
+        https://www.kaggle.com/datasets/shenaozheng/ui-detection-for-gambling-sites
 
-This module uses visual patterns to identify gambling-related imagery.
+SafeSearch uses a transfer-learning-based image classifier to detect gambling-related content in webpage screenshots.
+
+**Architecture & Training**
+- **Backbone:** DenseNet121 pretrained on ImageNet, with the convolutional base frozen during training.
+- **Classification head:** Global Average Pooling → Dense (64, ReLU) → Dropout (0.3) → Dense (1, Sigmoid).
+- **Input:** Webpage screenshots resized to `224 × 224 × 3`, normalized to `[0, 1]`.
+- **Data balancing:** Undersamples both classes to the size of the minority class.
+- **Augmentation:** Random horizontal flips, rotations, zoom, brightness, and contrast adjustments to improve generalization.
+- **Optimization:** Adam optimizer with binary cross-entropy loss, batch size `32`, and up to `10` epochs.
+- **Regularization:** Early stopping monitors validation loss with patience `3` and restores the best weights.
+
+**Inference & Evaluation**
+
+The sigmoid output is thresholded at `0.5` to classify screenshots as `Gambling` or `Non-Gambling`. Performance is measured on the held-out test set using accuracy, ROC-AUC, precision, recall, F1-score, and a confusion matrix.
+
 
 ### Final Safety Verdict
 
